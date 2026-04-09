@@ -82,7 +82,11 @@ ttune_benchmark_main() {
   if [[ -n "${encoders_csv}" ]]; then
     encoders="$(printf '%s' "${encoders_csv}" | tr ',' '\n')"
   else
-    encoders="$(ttune_detect_profile_json | jq -r '.encoders.available[]' | rg '^(libx265|libsvtav1|hevc_nvenc|av1_nvenc|hevc_qsv|av1_qsv|hevc_vaapi|av1_vaapi|hevc_videotoolbox)$' || true)"
+    encoders="$(
+      ttune_detect_profile_json |
+        jq -r '.encoders.available[]' |
+        awk '/^(libx264|libx265|libsvtav1|hevc_nvenc|av1_nvenc|hevc_qsv|av1_qsv|hevc_vaapi|av1_vaapi|hevc_videotoolbox)$/'
+    )"
   fi
   if [[ -z "${encoders}" ]]; then
     ttune_err "No suitable encoders found for benchmark."

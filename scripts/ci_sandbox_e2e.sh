@@ -49,12 +49,12 @@ jq -e '.schema_version=="1.0" and (.encoder_results|type=="array") and .recommen
 jq -e '.schema_version=="1.0" and (.encoder_results|type=="array") and .recommendations.speed_priority' "${OUT_DIR}/benchmark_nocache.json" >/dev/null
 jq -e '.schema_version=="1.0" and .input and .encoder and .quality_param and .fallback.chain' "${OUT_DIR}/optimize_sdr.json" >/dev/null
 jq -e '.file_analysis.video.hdr == true and .hdr_mode == "tonemap"' "${OUT_DIR}/optimize_hdr.json" >/dev/null
-rg '^ffmpeg -i ' "${OUT_DIR}/ffmpeg_cmd.txt" >/dev/null
+grep -E '^ffmpeg -i ' "${OUT_DIR}/ffmpeg_cmd.txt" >/dev/null
 jq -e '.library_variables and .node_config' "${OUT_DIR}/generate_tdarr.json" >/dev/null
 jq -e '.nodes and .edges' "${OUT_DIR}/generate_tdarr_flow.json" >/dev/null
-rg 'module\.exports' "${OUT_DIR}/generate_tdarr_flow.ts" >/dev/null
+grep -E 'module\.exports' "${OUT_DIR}/generate_tdarr_flow.ts" >/dev/null
 jq -e 'has("com.ttune.encoder") and has("com.ttune.tier")' "${OUT_DIR}/docker_labels.json" >/dev/null
-rg 'ttune\.io/encoder=' "${OUT_DIR}/k8s_labels.txt" >/dev/null
+grep -E 'ttune\.io/encoder=' "${OUT_DIR}/k8s_labels.txt" >/dev/null
 jq -e '.fleet|length>=1' "${OUT_DIR}/fleet.json" >/dev/null
 jq -e '.pass == true' "${OUT_DIR}/verify_same.json" >/dev/null
 test "$(cat "${OUT_DIR}/negative_missing.exit")" = "3"

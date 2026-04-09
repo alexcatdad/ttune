@@ -264,7 +264,7 @@ ttune_optimize_batch() {
     exit "${TTUNE_EXIT_INPUT}"
   fi
   local files first
-  files="$(rg --files "${batch_dir}" | rg '\.(mkv|mp4|mov|avi)$' || true)"
+  files="$(find "${batch_dir}" -type f | awk '/\.(mkv|mp4|mov|avi)$/')"
   first=1
   printf '[\n'
   while IFS= read -r file; do

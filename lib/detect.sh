@@ -25,13 +25,17 @@ ttune_detect_core_counts_json() {
   local os perf eff logical
   os="$(ttune_detect_os)"
   if [[ "${os}" == "Darwin" ]]; then
-    logical="$(sysctl -n hw.logicalcpu 2>/dev/null || echo 0)"
-    perf="$(sysctl -n hw.perflevel0.physicalcpu 2>/dev/null || echo 0)"
-    eff="$(sysctl -n hw.perflevel1.physicalcpu 2>/dev/null || echo 0)"
+    logical="$(sysctl -n hw.logicalcpu 2>/dev/null || true)"
+    perf="$(sysctl -n hw.perflevel0.physicalcpu 2>/dev/null || true)"
+    eff="$(sysctl -n hw.perflevel1.physicalcpu 2>/dev/null || true)"
+    [[ "${logical}" =~ ^[0-9]+$ ]] || logical=0
+    [[ "${perf}" =~ ^[0-9]+$ ]] || perf=0
+    [[ "${eff}" =~ ^[0-9]+$ ]] || eff=0
     jq -n --argjson logical "${logical}" --argjson perf "${perf}" --argjson eff "${eff}" \
       '{threads: $logical, perf_cores: $perf, eff_cores: $eff}'
   else
-    logical="$(nproc 2>/dev/null || echo 0)"
+    logical="$(nproc 2>/dev/null || true)"
+    [[ "${logical}" =~ ^[0-9]+$ ]] || logical=0
     jq -n --argjson logical "${logical}" '{threads: $logical}'
   fi
 }
