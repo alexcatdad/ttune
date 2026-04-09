@@ -1,0 +1,70 @@
+[defaults]
+target_vmaf = 95
+codec = "hevc"
+strategy = "balanced"
+scale = "1080p"
+hdr_mode = "auto"
+container = "mkv"
+pixel_format = "yuv420p10le"
+
+[defaults.audio]
+strategy = "passthrough"
+transcode_codec = "aac"
+stereo_bitrate = 192
+surround_bitrate = 384
+create_stereo_downmix = true
+
+[defaults.subtitles]
+strategy = "passthrough"
+burn_forced = true
+convert_to_srt = false
+
+[encoder.libx265]
+preset = "slow"
+crf_range = [18, 28]
+tune = ""
+extra_params = ""
+
+[encoder.libsvtav1]
+preset = 6
+crf_range = [24, 40]
+film_grain = 0
+extra_params = "tune=0:enable-overlays=1"
+
+[encoder.hevc_nvenc]
+preset = "p5"
+cq_range = [20, 32]
+multipass = "fullres"
+extra_params = ""
+
+[encoder.hevc_videotoolbox]
+quality_range = [40, 75]
+
+[content_profiles.anime]
+codec = "hevc"
+encoder_tune = "animation"
+crf_adjust = -4
+
+[content_profiles.grain]
+codec = "hevc"
+encoder_tune = "grain"
+crf_adjust = -2
+svtav1_film_grain = 10
+
+[content_profiles.hdr]
+hdr_mode = "preserve"
+pixel_format = "yuv420p10le"
+
+[tdarr]
+server_url = "http://localhost:8266"
+api_key = ""
+default_library = "movies"
+
+[disk]
+min_free_space_gb = 50
+temp_dir = "/tmp/ttune"
+prefer_local = true
+
+[fallback]
+hevc = ["hevc_nvenc", "hevc_qsv", "hevc_vaapi", "libx265"]
+av1 = ["av1_nvenc", "av1_qsv", "av1_vaapi", "libsvtav1"]

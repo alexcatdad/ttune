@@ -1,0 +1,9 @@
+{
+  "nodeName": "gpu-server-01",
+  "serverURL": "http://tdarr-server:8266",
+  "transcodecpuWorkers": 2,
+  "transcodegpuWorkers": 1,
+  "healthcheckcpuWorkers": 1,
+  "healthcheckgpuWorkers": 0,
+  "gpuType": "nvenc"
+}

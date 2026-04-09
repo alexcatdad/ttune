@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ttune benchmark result",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "version",
+    "timestamp",
+    "hostname",
+    "fingerprint",
+    "hardware",
+    "encoder_results",
+    "recommendations"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "timestamp": {
+      "type": "string"
+    },
+    "hostname": {
+      "type": "string"
+    },
+    "fingerprint": {
+      "type": "string"
+    },
+    "hardware": {
+      "type": "object"
+    },
+    "encoder_results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["encoder", "available"],
+        "properties": {
+          "encoder": {
+            "type": "string"
+          },
+          "available": {
+            "type": "boolean"
+          },
+          "fps_1080p": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "recommendations": {
+      "type": "object",
+      "required": ["speed_priority", "quality_priority", "balanced"]
+    }
+  }
+}

@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# shellcheck source=lib/core.sh
+source "${SCRIPT_DIR}/lib/core.sh"
+# shellcheck source=lib/deps.sh
+source "${SCRIPT_DIR}/lib/deps.sh"
+# shellcheck source=lib/detect.sh
+source "${SCRIPT_DIR}/lib/detect.sh"
+# shellcheck source=lib/benchmark.sh
+source "${SCRIPT_DIR}/lib/benchmark.sh"
+# shellcheck source=lib/optimize.sh
+source "${SCRIPT_DIR}/lib/optimize.sh"
+# shellcheck source=lib/generate.sh
+source "${SCRIPT_DIR}/lib/generate.sh"
+# shellcheck source=lib/verify.sh
+source "${SCRIPT_DIR}/lib/verify.sh"
+# shellcheck source=lib/fleet.sh
+source "${SCRIPT_DIR}/lib/fleet.sh"
+
+TTUNE_VERSION="1.0.0-dev"
+
+usage() {
+  cat <<'EOF'
+ttune <command> [options]
+
+Commands:
+  detect          Detect hardware and encoder capabilities
+  benchmark       Run encode benchmark and cache result
+  optimize        Recommend ffmpeg parameters for file/profile
+  generate        Generate integration outputs (tdarr, docker, k8s, etc)
+  verify          Verify transcoded output quality and compatibility
+  fleet-config    Build per-node profiles from host list
+  version         Print version and dependency info
+EOF
+}
+
+cmd="${1:-}"
+if [[ -z "${cmd}" ]]; then
+  usage
+  exit "${TTUNE_EXIT_USAGE}"
+fi
+shift || true
+
+case "${cmd}" in
+detect)
+  ttune_detect_main "$@"
+  ;;
+benchmark)
+  ttune_require_min_deps
+  ttune_benchmark_main "$@"
+  ;;
+optimize)
+  ttune_require_min_deps
+  ttune_optimize_main "$@"
+  ;;
+generate)
+  ttune_generate_main "$@"
+  ;;
+verify)
+  ttune_require_min_deps
+  ttune_verify_main "$@"
+  ;;
+fleet-config)
+  ttune_fleet_main "$@"
+  ;;
+version)
+  ttune_version_main "${TTUNE_VERSION}"
+  ;;
+help | -h | --help)
+  usage
+  ;;
+*)
+  ttune_err "Unknown command: ${cmd}"
+  usage
+  exit "${TTUNE_EXIT_USAGE}"
+  ;;
+esac

@@ -1,0 +1,9 @@
+{
+  "v_encoder": "libx265",
+  "v_preset": "slow",
+  "v_crf": "22",
+  "v_pix_fmt": "yuv420p10le",
+  "v_scale": "1920:-2:flags=lanczos",
+  "a_strategy": "copy",
+  "target_container": ".mkv"
+}

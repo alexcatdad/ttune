@@ -1,0 +1,106 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  lint:
+    name: Lint (shell + format + biome)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install lint dependencies
+        run: sudo apt-get update && sudo apt-get install -y shellcheck shfmt
+
+      - name: Run lint
+        run: make lint-ci
+
+  rust_companion:
+    name: Rust companion check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: crates/ttune-bench
+
+      - name: Cargo check
+        run: make rust-ci
+
+  test_linux:
+    name: CLI tests (linux)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install test dependencies
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg jq bats shellcheck shfmt
+
+      - name: Run Bats tests
+        run: make test-ci
+
+      - name: Run sandbox end-to-end tests
+        run: make sandbox-ci
+
+      - name: Upload sandbox artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sandbox-linux
+          path: .sandbox/ci/out
+          if-no-files-found: warn
+
+  test_macos:
+    name: CLI tests (macos)
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install test dependencies
+        run: brew install ffmpeg jq bats-core shellcheck shfmt
+
+      - name: Run Bats tests
+        run: make test-ci
+
+      - name: Run sandbox end-to-end tests
+        run: make sandbox-ci
+
+      - name: Upload sandbox artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sandbox-macos
+          path: .sandbox/ci/out
+          if-no-files-found: warn
