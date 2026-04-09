@@ -13,13 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "npm"
+      - name: Setup Biome
+        uses: biomejs/setup-biome@v2
 
       - name: Install lint dependencies
         run: sudo apt-get update && sudo apt-get install -y shellcheck shfmt
@@ -32,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
@@ -50,13 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "npm"
+        uses: actions/checkout@v5
 
       - name: Install test dependencies
         run: sudo apt-get update && sudo apt-get install -y ffmpeg jq bats shellcheck shfmt
@@ -69,7 +60,7 @@ jobs:
 
       - name: Upload sandbox artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: sandbox-linux
           path: .sandbox/ci/out
@@ -80,13 +71,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "npm"
+        uses: actions/checkout@v5
 
       - name: Install test dependencies
         run: brew install ffmpeg jq bats-core shellcheck shfmt
@@ -99,7 +84,7 @@ jobs:
 
       - name: Upload sandbox artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: sandbox-macos
           path: .sandbox/ci/out

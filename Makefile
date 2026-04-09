@@ -9,11 +9,11 @@ lint:
 lint-ci:
 	shellcheck ttune lib/*.sh scripts/*.sh
 	shfmt -d ttune lib/*.sh scripts/*.sh
-	npx --yes @biomejs/biome check .
+	biome check .
 
 format-check:
 	shfmt -d ttune lib/*.sh scripts/*.sh
-	npx --yes @biomejs/biome check .
+	biome check .
 
 smoke:
 	chmod +x ttune
