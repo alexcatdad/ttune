@@ -85,7 +85,11 @@ ttune_detect_disk_json() {
 
 ttune_detect_encoders_json() {
   local enc_list
-  enc_list="$(ffmpeg -hide_banner -encoders 2>/dev/null | awk '{print $2}' | rg '^(h264|hevc|av1).*(_nvenc|_qsv|_vaapi|_videotoolbox|_v4l2m2m)$|^libx265$|^libsvtav1$|^libx264$' || true)"
+  enc_list="$(
+    ffmpeg -hide_banner -encoders 2>/dev/null |
+      awk '{print $2}' |
+      awk '/^(h264|hevc|av1).*(_nvenc|_qsv|_vaapi|_videotoolbox|_v4l2m2m)$|^libx265$|^libsvtav1$|^libx264$/'
+  )"
   jq -n --arg enc "${enc_list}" '
     ($enc | split("\n") | map(select(length>0)) | unique) as $items
     | {available: $items}'
@@ -140,10 +144,10 @@ ttune_detect_profile_json() {
       hostname: $hostname,
       hardware: {
         arch: $arch,
-        cpu: {
+        cpu: (({
           model: $cpu_model,
           features: $features
-        } + $cores,
+        }) + $cores),
         memory_gb: $memory_gb,
         disk: $disk,
         gpu: $gpu
